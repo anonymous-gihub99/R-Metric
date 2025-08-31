@@ -178,7 +178,7 @@ class ReliabilityMonitor:
         self.metrics_history = []
         
         # Get weights with defaults
-        default_weights = {"lambda": 0.10, "sigma_sq": 0.45, "delta_l": 0.45}
+        default_weights = {"lambda": 0.10, "sigma_sq": 0.50, "delta_l": 0.70}
         self.weights = getattr(config, 'r_metric_weights', default_weights)
         
         logger.debug(f"ReliabilityMonitor initialized with weights: {self.weights}")
