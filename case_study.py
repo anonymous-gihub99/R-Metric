@@ -52,8 +52,7 @@ class ExperimentConfig:
     """Configuration for the case study experiment"""
     # Model configuration
     model_name: str = "Qwen/Qwen3-4B"
-    dataset_name: str = "tatsu-lab/alpaca"
-
+    dataset_name: str = "imdb"
     
     # Training configuration
     max_steps: int = 800
@@ -451,8 +450,9 @@ class CaseStudyTrainer:
         
         # Tokenize dataset
         def tokenize_function(examples):
-            texts = [f"Instruction: {inst}\nOutput: {out}" 
-                    for inst, out in zip(examples['instruction'], examples['output'])]
+            # For IMDB dataset, use 'text' column
+            texts = [f"Review: {text}\nSentiment: {label}" 
+                    for text, label in zip(examples['text'], examples['label'])]
             return self.tokenizer(
                 texts,
                 truncation=True,
