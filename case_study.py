@@ -637,8 +637,7 @@ class CaseStudyTrainer:
         # Save full results to JSON
         json_path = self.config.output_path / "results.json"
         with open(json_path, 'w') as f:
-            json.dump(self.results, f, indent=2)
-        logger.info(f"Results saved to {json_path}")
+            json.dump(self.results, f, indent=2, default=str)
         
         # Generate summary
         self.generate_summary()
