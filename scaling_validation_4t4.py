@@ -755,4 +755,5 @@ if __name__ == "__main__":
         sys.exit(0)
     except Exception as e:
         logger.error(f"Fatal error: {e}")
-        logger
+        logger.error(traceback.format_exc())
+        sys.exit(1)
