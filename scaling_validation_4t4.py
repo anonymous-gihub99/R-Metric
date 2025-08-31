@@ -69,7 +69,7 @@ class JSONEncoder(json.JSONEncoder):
 class ScalingConfig:
     """Configuration for scaling experiments with all required fields"""
     # Model configuration
-    model_name: str = "Qwen/Qwen3-8B"  # Start with smaller model for testing
+    model_name: str = "Qwen/Qwen3-0.6B"  # Start with smaller model for testing
     dataset_name: str = "wikitext"
     dataset_config: str = "wikitext-2-raw-v1"
     
