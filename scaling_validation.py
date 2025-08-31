@@ -88,7 +88,7 @@ class ScalingConfig:
     r_metric_weights: Dict[str, float] = field(default_factory=lambda: {
         "lambda": 0.10,
         "sigma_sq": 0.45,
-        "delta_l": 0.45
+        "delta_l": 0.70
     })
     r_metric_alert_threshold: float = 0.6
     
@@ -458,9 +458,9 @@ class ScalingValidator:
     def run_weight_variations(self) -> List[Dict]:
         """Test multiple weight configurations"""
         weight_configs = [
-            {"lambda": 0.10, "sigma_sq": 0.45, "delta_l": 0.45},  # Default
-            {"lambda": 0.15, "sigma_sq": 0.40, "delta_l": 0.45},  # Variant 1
-            {"lambda": 0.10, "sigma_sq": 0.40, "delta_l": 0.50},  # Variant 2
+            {"lambda": 0.10, "sigma_sq": 0.45, "delta_l": 0.70},  # Default
+            {"lambda": 0.15, "sigma_sq": 0.52, "delta_l": 0.70},  # Variant 1
+            {"lambda": 0.10, "sigma_sq": 0.55, "delta_l": 0.70},  # Variant 2
         ]
         
         all_results = []
