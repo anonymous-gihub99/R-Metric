@@ -52,7 +52,7 @@ class ExperimentConfig:
     """Configuration for the case study experiment"""
     # Model configuration
     model_name: str = "Qwen/Qwen3-4B"
-    dataset_name: str = "imbd"
+    dataset_name: str = "tatsu-lab/alpaca"
 
     
     # Training configuration
