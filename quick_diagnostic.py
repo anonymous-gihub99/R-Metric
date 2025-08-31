@@ -2,7 +2,7 @@
 """
 Quick diagnostic script to identify the root cause of scaling validation failures
 """
-
+import torch
 import sys
 import traceback
 import logging
