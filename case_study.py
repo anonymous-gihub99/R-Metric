@@ -52,8 +52,8 @@ class ExperimentConfig:
     """Configuration for the case study experiment"""
     # Model configuration
     model_name: str = "Qwen/Qwen3-4B"
-    dataset_name: str = "OpenCoder-LLM/opc-sft-stage2"
-    dataset_config: str = "educational_instruct"
+    dataset_name: str = "imbd"
+
     
     # Training configuration
     max_steps: int = 800
@@ -446,7 +446,6 @@ class CaseStudyTrainer:
         logger.info(f"Loading dataset: {self.config.dataset_name}")
         dataset = load_dataset(
             self.config.dataset_name,
-            self.config.dataset_config,
             split='train'
         ).shuffle(seed=42).select(range(4000))
         
