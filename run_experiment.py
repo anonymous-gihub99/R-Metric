@@ -1,6 +1,8 @@
 import itertools
 import copy
 import os
+import re
+import json
 from real_simulator import TrainingSimulator, CONFIG as BASE_CONFIG
 
 # --- Step 1: Define the Experiment Matrix ---
@@ -56,6 +58,24 @@ NO_FAULT = 'NONE'
 # *** KEY CHANGE: Lower the alert threshold to improve sensitivity (recall) ***
 BASE_CONFIG['alert_thresholds']['r_metric'] = 0.56
 
+
+def sanitize(obj):
+    """Recursively make configs JSON-safe (convert sets -> lists)."""
+    if isinstance(obj, set):
+        return list(obj)
+    elif isinstance(obj, dict):
+        return {k: sanitize(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize(v) for v in obj]
+    else:
+        return obj
+
+
+def safe_model_name(model: str) -> str:
+    """Sanitize model name for experiment IDs."""
+    return re.sub(r'[^a-z0-9_]', '_', model.lower())
+
+
 def main():
     """
     Main function to orchestrate and run all experiments.
@@ -69,32 +89,41 @@ def main():
         MODELS, SEVERITY_FAULTS.items(), REPETITIONS
     ):
         for severity, params in severities.items():
-            experiment_id = f"run_{experiment_counter:03d}_{model.lower().replace(' ', '_')}_{fault_type.lower()}_{severity}_rep{rep}"
+            experiment_id = f"run_{experiment_counter:03d}_{safe_model_name(model)}_{fault_type.lower()}_{severity}_rep{rep}"
             config = copy.deepcopy(BASE_CONFIG)
             config['experiment_id'] = experiment_id
             config['model_type'] = model
+            config.setdefault('fault_injection', {})
             config['fault_injection']['type'] = fault_type
+            config['fault_injection'].setdefault('params', {})
             config['fault_injection']['params'].update(params)
+            config = sanitize(config)   # ensure JSON-safe
             all_configs.append(config)
             experiment_counter += 1
 
     # Simple single faults
     for model, fault_type, rep in itertools.product(MODELS, SIMPLE_FAULTS, REPETITIONS):
-        experiment_id = f"run_{experiment_counter:03d}_{model.lower().replace(' ', '_')}_{fault_type.lower()}_rep{rep}"
+        experiment_id = f"run_{experiment_counter:03d}_{safe_model_name(model)}_{fault_type.lower()}_rep{rep}"
         config = copy.deepcopy(BASE_CONFIG)
         config['experiment_id'] = experiment_id
         config['model_type'] = model
+        config.setdefault('fault_injection', {})
         config['fault_injection']['type'] = fault_type
+        config['fault_injection'].setdefault('params', {})
+        config = sanitize(config)
         all_configs.append(config)
         experiment_counter += 1
 
     # Control (no faults)
     for model, rep in itertools.product(MODELS, REPETITIONS):
-        experiment_id = f"run_{experiment_counter:03d}_{model.lower().replace(' ', '_')}_control_rep{rep}"
+        experiment_id = f"run_{experiment_counter:03d}_{safe_model_name(model)}_control_rep{rep}"
         config = copy.deepcopy(BASE_CONFIG)
         config['experiment_id'] = experiment_id
         config['model_type'] = model
+        config.setdefault('fault_injection', {})
         config['fault_injection']['type'] = NO_FAULT
+        config['fault_injection'].setdefault('params', {})
+        config = sanitize(config)
         all_configs.append(config)
         experiment_counter += 1
 
@@ -108,6 +137,7 @@ def main():
             print(f"!!! Experiment {config['experiment_id']} failed with an error: {e} !!!")
 
     print("\n--- Full Experimental Suite Completed ---")
+
 
 if __name__ == '__main__':
     main()
